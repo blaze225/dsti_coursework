@@ -1,2 +1,2 @@
 # metaheuristics
-Implementations of metaheuristic optimization algorithms
+Implementations of metaheuristic optimization algorithms at DSTI
