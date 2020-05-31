@@ -17,7 +17,7 @@ def solve_ga(problem_fit):
     
     # Parameter lists
     populuation_list = [100, 1000, 10000]
-    mutation_prob_list = [0.01,0.1,0.5]
+    mutation_prob_list = [0.01,0.1, 0.5]
 
     # Solve
     for p in populuation_list:
@@ -148,7 +148,7 @@ if __name__=="__main__":
     print("###### Solving using Genetic Algorithm ######\n")
     solve_ga(problem_fit)
     print("###### Solving using Simulated Annealing Algorithm ######\n")
-    solve_sa(problem_fit)
+    #solve_sa(problem_fit)
 
 
     

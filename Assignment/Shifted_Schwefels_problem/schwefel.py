@@ -4,6 +4,7 @@
 from pygmo import *
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 import time
 
 class shifted_schwefels_function:
@@ -49,16 +50,16 @@ def solve_pso(dim, bias, bounds):
     prob = problem(shifted_schwefels_function(dim, bias, bounds))
     
     # Solve
-    for omega in omega_list:
-        for eta1 in eta1_list:
-            for eta2 in eta2_list:
-                for max_vel in max_vel_list:
-                    for pop_size in population_size_list:
+    for omega in [0.6]:
+        for eta1 in [2]:
+            for eta2 in [2]:
+                for max_vel in [0.6]:
+                    for pop_size in [200]:
                         best_fitness = []
                         
                         # Defining the population and algorithm objects in pygmo
                         pop = population(prob, pop_size)
-                        algo = algorithm(pso(gen = 1000, omega = omega, eta1 = eta1, eta2 = eta2, max_vel = max_vel, seed = 7))
+                        algo = algorithm(pso(gen = 2000, omega = omega, eta1 = eta1, eta2 = eta2, max_vel = max_vel, seed = 7))
                         #algo.set_verbosity(50)
         
                         # Start timer
@@ -107,7 +108,25 @@ def solve_pso(dim, bias, bounds):
         plt.savefig("schwefel_50_pso.png")    
     else:
         plt.savefig("schwefel_500_pso.png")
+        # Saving solution to csv
+        df = pd.DataFrame({'solution':best_params_dict['Solution']}) 
+        df.to_csv("solution_500.csv") 
 
+def solve_sa(dim, bias, bounds):
+    """ Solving using Simulated Annealing"""    
+    
+    global best_fitness
+    best_fitness_curr = np.inf
+    best_params_dict = {}
+    
+    # Paramter list
+    ts_list = [10, 100, 1000]
+    tf_list = [1e-5, 0.01, 0.1]
+    n_t_adj = [10, 100]
+    
+    # Defining the problem in pygmo
+    prob = problem(shifted_schwefels_function(dim, bias, bounds))
+    
 if __name__=="__main__":
     
     # Read shift data
@@ -124,7 +143,7 @@ if __name__=="__main__":
     # Solve
     best_fitness = []
     print("##### PSO for Dimension:50 #####\n")
-    solve_pso(dim[0], bias, bounds)
+    #solve_pso(dim[0], bias, bounds)
     print("##### PSO for Dimension:500 #####\n")
     solve_pso(dim[1], bias, bounds)
 

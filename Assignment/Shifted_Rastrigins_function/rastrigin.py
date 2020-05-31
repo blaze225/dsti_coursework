@@ -103,7 +103,10 @@ def solve_pso(dim, bias, bounds):
     plt.title("Convergence curve: Shifted Rastrigins function using PSO")
     plt.xlabel("Iterations")
     plt.ylabel("Fitness")
-    plt.savefig("rastrigin_pso.png")                     
+    if dim == 50:
+        plt.savefig("rastrigin_50_pso.png")   
+    else:
+        plt.savefig("rastrigin_500_pso.png")               
 
 if __name__=="__main__":
     

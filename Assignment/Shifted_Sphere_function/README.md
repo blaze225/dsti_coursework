@@ -12,7 +12,14 @@ I used the Particle Swarm Optimzation algorithm as in general it works well for 
 
 1. Chosen Algorithm: Particle Swarm Optimzation from pygmo
 
-2. Best Parameters  
+2. Parameters Tested
+* Population (Particle Swarm size):  [50, 100, 200]
+* Omega (inertia factor):  [0.2, 0.4, 0.6, 0.8]
+* eta1 (social component):  [0.5, 1, 2, 3]
+* eta2 (cognitive component):  [0.5, 1, 2, 3]
+* Maximum allowed particle velocity:  [0.2, 0.4, 0.6, 0.8]
+
+3. Best Parameters  
 * Search Space = [-100, 100]  
 * Bias = -450  
 * Population (Particle Swarm size):  100
@@ -21,7 +28,7 @@ I used the Particle Swarm Optimzation algorithm as in general it works well for 
 * eta2 (cognitive component):  2
 * Maximum allowed particle velocity:  0.6
 	
-3. Results
+4. Results
 * Solution: 
 >  	[ 97.24993593  77.06098507 -19.03114882  25.42869803 -22.90880262
 	  69.57217579   5.36971395  61.48073072 -21.30069852  92.34681338
@@ -35,8 +42,39 @@ I used the Particle Swarm Optimzation algorithm as in general it works well for 
 	 -24.76648648  90.44136626  43.86410228  55.86848706  23.53173224]
 * Fitness: -450.0
 
-4. Stopping Criterion = Number of generations: 1000
-5. Computational Time:  2.9  seconds
+5. Stopping Criterion = Number of generations: 1000
+6. Computational Time:  2.9  seconds
+7. Convergence Curve
 
+![sphere_500_pso](images/sphere_500_pso.png)
 
 ### Dimension 500
+
+1. Chosen Algorithm: Particle Swarm Optimzation from pygmo
+
+2. Parameters Tested
+* Population (Particle Swarm size):  [50, 100, 200]
+* Omega (inertia factor):  [0.2, 0.4, 0.6, 0.8]
+* eta1 (social component):  [0.5, 1, 2, 3]
+* eta2 (cognitive component):  [0.5, 1, 2, 3]
+* Maximum allowed particle velocity:  [0.2, 0.4, 0.6, 0.8]
+
+3. Best Parameters  
+* Search Space = [-100, 100]  
+* Bias = -450  
+* Population (Particle Swarm size):  200
+* Omega (inertia factor):  0.6
+* eta1 (social component):  2
+* eta2 (cognitive component):  2
+* Maximum allowed particle velocity:  0.6
+	
+4. Results
+* Solution: ![solution_500](solution_500.csv)
+
+* Fitness: -450.0
+
+5. Stopping Criterion = Number of generations: 3000
+6. Computational Time:  44.74 seconds
+7. Convergence Curve
+
+![sphere_500_pso](images/sphere_500_pso.png)

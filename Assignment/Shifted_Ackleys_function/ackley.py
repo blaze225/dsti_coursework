@@ -16,12 +16,12 @@ class shifted_ackleys_function:
         global best_fitness
         sum1 = 0
         sum2 = 0
-        for i in range(dim - 1):
+        for i in range(self.dim - 1):
             z = x[i] - ackley[i]
             sum1 += z ** 2
             sum2 += np.cos(2 * np.pi * z)
-        sum = -20 * np.exp(-0.2 * np.sqrt(sum1 / dim)) - np.exp(sum2 / dim) + 20 + np.e
-        result = Sum + f_bias
+        Sum = -20 * np.exp(-0.2 * np.sqrt(sum1 / self.dim)) - np.exp(sum2 / self.dim) + 20 + np.e
+        result = Sum + self.bias
         best_fitness.append(result)
         return [result]
 
@@ -106,7 +106,10 @@ def solve_pso(dim, bias, bounds):
     plt.title("Convergence curve: Shifted Ackleys function using PSO")
     plt.xlabel("Iterations")
     plt.ylabel("Fitness")
-    plt.savefig("ackley_pso.png")                     
+    if dim == 50:
+        plt.savefig("ackley_50_pso.png")
+    else:
+        plt.savefig("ackley_500_pso.png")
 
 if __name__=="__main__":
     

@@ -4,6 +4,7 @@
 from pygmo import *
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 import time
 
 class shifted_sphere_function:
@@ -39,7 +40,7 @@ def solve_pso(dim, bias, bounds):
     eta1_list = [0.5, 1, 2, 3]
     eta2_list = [0.5, 1, 2, 3]
     max_vel_list = [0.2, 0.4, 0.6, 0.8]
-    population_size_list = [dim, dim*2]
+    population_size_list = [50, 100, 200]
     
     # Defining the problem in pygmo
     prob = problem(shifted_sphere_function(dim, bias, bounds))
@@ -55,7 +56,7 @@ def solve_pso(dim, bias, bounds):
                         
                         # Defining the population and algorithm objects in pygmo
                         pop = population(prob, pop_size)
-                        algo = algorithm(pso(gen = 1000, omega = omega, eta1 = eta1, eta2 = eta2, 
+                        algo = algorithm(pso(gen = 3000, omega = omega, eta1 = eta1, eta2 = eta2, 
                                              max_vel = max_vel, seed = 7))
                         #algo.set_verbosity(50)
                             
@@ -89,14 +90,13 @@ def solve_pso(dim, bias, bounds):
     print("-- Results --")
     print("\tSolution:  ", best_params_dict['Solution'])
     print("\tFitness: ", round(best_params_dict['Fitness'][0],2))
-    print("Stopping Criterion = Number of generations: 1000")
+    print("Stopping Criterion = Number of generations: 3000")
     print("Computational Time: ",best_params_dict['Time'], " seconds\n\n")
 
     # Get min for each swarm of particles in an iteration/generation
     fitness_curve = np.array([np.min(np.array(best_params_dict['Fitness_curve'][i:i+best_params_dict['pop_size']])) for i in range(0,len(best_params_dict['Fitness_curve']), best_params_dict['pop_size'])])
     
     # Plotting
-    fig = plt.figure(figsize=(16, 13))
     plt.plot(fitness_curve)
     plt.title("Convergence curve: Shifted Sphere function using PSO")
     plt.xlabel("Iterations")
@@ -104,7 +104,10 @@ def solve_pso(dim, bias, bounds):
     if dim == 50:
         plt.savefig("sphere_50_pso.png")
     else:
-        plt.savefig("sphere_500_pso.png")                           
+        plt.savefig("sphere_500_pso.png")
+        # Saving solution to csv
+        df = pd.DataFrame({'solution':best_params_dict['Solution']}) 
+        df.to_csv("solution_500.csv")                       
 
 if __name__=="__main__":
     

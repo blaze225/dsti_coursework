@@ -16,12 +16,12 @@ class shifted_griewanks_function:
         global best_fitness
         F1 = 0
         F2 = 1
-        for i in range(dim):
+        for i in range(self.dim):
             z = x[i] - griewank[i]
             F1 += (z**2)/4000
-            F2 += math.cos(z/math.sqrt(i + 1))
+            F2 += np.cos(z/np.sqrt(i + 1))
         F = F1 - F2 + 1
-        result = F + f_bias
+        result = F + self.bias
         best_fitness.append(result)
         return [result]
 
@@ -106,7 +106,10 @@ def solve_pso(dim, bias, bounds):
     plt.title("Convergence curve: Shifted Griewanks function using PSO")
     plt.xlabel("Iterations")
     plt.ylabel("Fitness")
-    plt.savefig("griewank_pso.png")                     
+    if dim == 50:
+        plt.savefig("griewank_50_pso.png")
+    else:
+        plt.savefig("griewank_500_pso.png")                    
 
 if __name__=="__main__":
     
