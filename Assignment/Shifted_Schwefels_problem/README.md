@@ -46,7 +46,7 @@ I used the Particle Swarm Optimzation algorithm as in general it works well for 
 6. Computational Time:  17.65  seconds
 7. Convergence Curve
 
-![schwefels_50_pso](images/schwefels_50_pso.png)
+![schwefel_50_pso](images/schwefel_50_pso.png)
 
 ### Dimension 500
 
@@ -69,11 +69,11 @@ I used the Particle Swarm Optimzation algorithm as in general it works well for 
 * Maximum allowed particle velocity:  0.6
   
 4. Results
-* Solution: ![solution_500](solution_500.csv)
+* Solution: [solution_500](solution_500.csv)
 * Fitness: -351.11
 
 5. Stopping Criterion = Number of generations: 2000
 6. Computational Time:  104.47  seconds
 7. Convergence Curve
 
-![schwefels_50_pso](images/schwefels_50_pso.png)
+![schwefel_50_pso](images/schwefel_50_pso.png)
