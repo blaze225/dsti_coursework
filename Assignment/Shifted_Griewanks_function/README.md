@@ -1,8 +1,8 @@
-# Continuous optimization: Shifted Sphere Function
+# Continuous optimization: Shifted Griewank's Function
 
 ## Definition of the Function
 
-![sphere_definition](images/sphere_definition.png)
+![griewank_definition](images/griewank_definition.png)
 
 ## Solution
 
@@ -20,33 +20,33 @@ I used the Particle Swarm Optimzation algorithm as in general it works well for 
 * Maximum allowed particle velocity:  [0.2, 0.4, 0.6, 0.8]
 
 3. Best Parameters  
-* Search Space = [-100, 100]  
-* Bias = -450  
+* Search Space = [-600, 600]  
+* Bias = -180 
 * Population (Particle Swarm size):  100
 * Omega (inertia factor):  0.6
-* eta1 (social component):  2
-* eta2 (cognitive component):  2
-* Maximum allowed particle velocity:  0.6
+* eta1 (social component):  0.5
+* eta2 (cognitive component):  3
+* Maximum allowed particle velocity:  0.4
 	
 4. Results
 * Solution: 
->  	[ 97.24993593  77.06098507 -19.03114882  25.42869803 -22.90880262
-	  69.57217579   5.36971395  61.48073072 -21.30069852  92.34681338
-	 -93.97588121  90.74598676  42.87698029  29.30964627 -10.66954841
-	 -65.0746178   67.04941633  94.01877029 -73.00502019 -49.80219854
-	  82.00142499  35.29318277  24.63214921   2.44313745 -99.3034509
-	 -54.62233879  95.69145813  72.25048085 -97.12295522  -2.84462699
-	 -16.71940701  54.58048361  -2.37049342   4.51291379  56.40988588
-	  18.24586958 -74.72144479 -78.05614656  32.58107757  99.41862299
-	 -30.76381164 -64.78909695 -86.42220775 -38.12082267 -33.04804039
-	 -24.76648648  90.44136626  43.86410228  55.86848706  23.53173224]
-* Fitness: -450.0
+>  	[ 508.75491657 -322.63378364  182.54355245  -16.82103765  399.48597385
+	  329.86076102 -118.50156729 -577.79562821  441.98363513  -26.81544124
+	  138.51881769  415.23095803  573.69861423  239.15690154 -412.63408155
+	 -113.1525444   573.93860431  526.70472614  -80.54586558  528.02010301
+	 -559.02420882 -176.558241    435.37848639 -588.166439   -433.33094135
+	 -356.681738   -425.95686358   91.7630921  -340.07404723 -361.42287839
+	 -547.22276643  331.12523865 -101.39154239  518.17749377  -40.8067898
+	  -60.58946629  452.98912668   30.18299536 -395.30935188  206.56496168
+	  445.16384423 -576.43258365  257.86451133 -226.16216595  398.1552211
+	   45.02885457  209.28273437  -42.82187511 -234.45915968 -372.41550312]
+* Fitness: -211.28
 
-5. Stopping Criterion = Number of generations: 1000
-6. Computational Time:  2.9  seconds
+5. Stopping Criterion = Number of generations: 2000
+6. Computational Time:  61.21  seconds
 7. Convergence Curve
 
-![sphere_500_pso](images/sphere_500_pso.png)
+![griewank_50_pso](images/griewank_50_pso.png)
 
 ### Dimension 500
 
@@ -60,8 +60,8 @@ I used the Particle Swarm Optimzation algorithm as in general it works well for 
 * Maximum allowed particle velocity:  [0.2, 0.4, 0.6, 0.8]
 
 3. Best Parameters  
-* Search Space = [-100, 100]  
-* Bias = -450  
+* Search Space = [-600, 600]  
+* Bias = -180   
 * Population (Particle Swarm size):  200
 * Omega (inertia factor):  0.6
 * eta1 (social component):  2
@@ -77,4 +77,4 @@ I used the Particle Swarm Optimzation algorithm as in general it works well for 
 6. Computational Time:  44.74 seconds
 7. Convergence Curve
 
-![sphere_500_pso](images/sphere_500_pso.png)
+![griewank_500_pso](images/griewank_500_pso.png)

@@ -4,6 +4,7 @@
 from pygmo import *
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 import time
 
 class shifted_ackleys_function:
@@ -52,11 +53,11 @@ def solve_pso(dim, bias, bounds):
     prob = problem(shifted_ackleys_function(dim, bias, bounds))
     
     # Solve
-    for omega in omega_list:
-        for eta1 in eta1_list:
-            for eta2 in eta2_list:
-                for max_vel in max_vel_list:
-                    for pop_size in population_size_list:
+    for omega in [0.2]:
+        for eta1 in [1]:
+            for eta2 in [1]:
+                for max_vel in [0.4]:
+                    for pop_size in [100]:
                         best_fitness = []
                         
                         # Defining the population and algorithm objects in pygmo
@@ -101,7 +102,6 @@ def solve_pso(dim, bias, bounds):
     fitness_curve = np.array([np.min(np.array(best_params_dict['Fitness_curve'][i:i+best_params_dict['pop_size']])) for i in range(0,len(best_params_dict['Fitness_curve']), best_params_dict['pop_size'])])
     
     # Plotting
-    fig = plt.figure(figsize=(16, 13))
     plt.plot(fitness_curve)
     plt.title("Convergence curve: Shifted Ackleys function using PSO")
     plt.xlabel("Iterations")
@@ -110,6 +110,9 @@ def solve_pso(dim, bias, bounds):
         plt.savefig("ackley_50_pso.png")
     else:
         plt.savefig("ackley_500_pso.png")
+        # Saving solution to csv
+        df = pd.DataFrame({'solution':best_params_dict['Solution']}) 
+        df.to_csv("solution_500.csv")
 
 if __name__=="__main__":
     
@@ -121,13 +124,13 @@ if __name__=="__main__":
     
     # Function parameters
     dim = (50,500)
-    bias = -180
-    bounds = (-600, 600)
+    bias = -140
+    bounds = (-32, 32)
     
     # Solve
     best_fitness = []
     print("##### PSO for Dimension:50 #####\n")
-    solve_pso(dim[0], bias, bounds)
+    #solve_pso(dim[0], bias, bounds)
     print("##### PSO for Dimension:500 #####\n")
     solve_pso(dim[1], bias, bounds)
 

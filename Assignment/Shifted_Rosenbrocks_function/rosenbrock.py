@@ -93,7 +93,7 @@ def solve_pso(dim, bias, bounds):
     print("-- Results --")
     print("\tSolution:  ", best_params_dict['Solution'])
     print("\tFitness: ", round(best_params_dict['Fitness'][0],2))
-    print("Stopping Criterion = Number of generations: 1000")
+    print("Stopping Criterion = Number of generations: 2000")
     print("Computational Time: ",best_params_dict['Time'], " seconds\n\n")
     
     # Get min for each swarm of particles in an iteration/generation
@@ -128,7 +128,7 @@ if __name__=="__main__":
     # Solve
     best_fitness = []
     print("##### PSO for Dimension:50 #####\n")
-    #solve_pso(dim[0], bias, bounds)
+    solve_pso(dim[0], bias, bounds)
     print("##### PSO for Dimension:500 #####\n")
     solve_pso(dim[1], bias, bounds)
 

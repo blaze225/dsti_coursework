@@ -1,8 +1,8 @@
-# Continuous optimization: Shifted Rastrigin's Function
+# Continuous optimization: Shifted Ackley's Function
 
 ## Definition of the Function
 
-![rastrigin_definition](images/rastrigin_definition.png)
+![ackley_definition](images/ackley_definition.png)
 
 ## Solution
 
@@ -20,32 +20,33 @@ I used the Particle Swarm Optimzation algorithm as in general it works well for 
 * Maximum allowed particle velocity:  [0.2, 0.4, 0.6, 0.8]
 
 3. Best Parameters  
-* Search Space = [-5, 5]  
-* Bias = -330  
+* Search Space = [-32, 32]  
+* Bias = -140  
 * Population (Particle Swarm size):  100
-* Omega (inertia factor):  0.6
-* eta1 (social component):  2
-* eta2 (cognitive component):  2
-* Maximum allowed particle velocity:  0.6
+* Omega (inertia factor):  0.2
+* eta1 (social component):  1
+* eta2 (cognitive component):  1
+* Maximum allowed particle velocity:  0.4
 	
 4. Results
 * Solution: 
->  	[ 3.84659251  1.33876573 -0.83171862 -1.34337432  2.34828968  3.43582921
-      0.52047536  4.32697074  1.99006422  3.29505408  4.3638418   1.23509789
-     -1.0185341   2.63747139  3.61847769  1.98965337  1.61012995 -1.74049142
-     -2.69746561  2.03050581 -4.19975238  2.81074511  2.29643824 -4.22400629
-      2.42163854  0.71588757 -3.42694483 -0.49831761  1.73382315  2.17939323
-     -3.27775921  0.79370037  3.59628567 -4.71920229 -0.47758587 -3.60435999
-     -4.19894436  0.46834549 -2.03018617 -0.39848343 -1.78119476  2.97812111
-      2.33153913  1.36477472 -3.87076635  1.84721301  2.20241866 -3.28001951
-      2.68907274  0.08883828]
-* Fitness: -187.75
+>  	[ 12.95052633 -10.79586083   4.22764779   2.22764774   5.19189644
+      12.78036677   5.43778411   8.0688676   -1.06539927  -4.30099842
+      -5.34037307  13.91376084   1.19927201   8.25156081  -8.32945597
+     -14.74029179 -13.0837847   16.00151143   0.69964902   2.815603
+      -6.56577744 -12.47240685  12.52809526   0.52660973  -2.32708881
+      -5.1337654    9.4756861  -10.36454801  -1.69167188  -6.04577297
+     -12.00229097  14.7293289   15.55725443  16.71530858  17.09928891
+       4.80152417  -5.24749485 -10.61718915 -10.78972446  -4.39075849
+       6.4304108   -5.64445523   1.06360828  10.37183994   6.90835268
+      10.15076278  -3.47532516   3.34458981  -0.19517366  18.64547949]
+* Fitness: -119.51
 
-5. Stopping Criterion = Number of generations: 2000
-6. Computational Time:  45.26  seconds
+5. Stopping Criterion = Number of generations: 1000
+6. Computational Time:  30.98  seconds
 7. Convergence Curve
 
-![rastrigin_50_pso](images/rastrigin_50_pso.png)
+![ackley_50_pso](images/ackley_50_pso.png)
 
 ### Dimension 500
 
@@ -59,8 +60,8 @@ I used the Particle Swarm Optimzation algorithm as in general it works well for 
 * Maximum allowed particle velocity:  [0.2, 0.4, 0.6, 0.8]
 
 3. Best Parameters  
-* Search Space = [-100, 100]  
-* Bias = 390  
+* Search Space = [-32, 32]  
+* Bias = -140 
 * Population (Particle Swarm size):  100
 * Omega (inertia factor):  0.2
 * eta1 (social component):  0.5
@@ -85,4 +86,4 @@ I used the Particle Swarm Optimzation algorithm as in general it works well for 
 6. Computational Time:  35.82  seconds
 7. Convergence Curve
 
-![rastrigin_500_pso](images/rastrigin_500_pso.png)
+![ackley_500_pso](images/ackley_500_pso.png)

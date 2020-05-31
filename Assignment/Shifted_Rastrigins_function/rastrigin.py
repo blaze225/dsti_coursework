@@ -4,6 +4,7 @@
 from pygmo import *
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 import time
 
 class shifted_rastrigins_function:
@@ -43,17 +44,17 @@ def solve_pso(dim, bias, bounds):
     eta1_list = [0.5, 1, 2, 3]
     eta2_list = [0.5, 1, 2, 3]
     max_vel_list = [0.2, 0.4, 0.6, 0.8]
-    population_size_list = [dim, dim*2, dim*3]
+    population_size_list = [50, 100, 200]
     
     # Defining the problem in pygmo
     prob = problem(shifted_rastrigins_function(dim, bias, bounds))
     
     # Solve
-    for omega in omega_list:
-        for eta1 in eta1_list:
-            for eta2 in eta2_list:
-                for max_vel in max_vel_list:
-                    for pop_size in population_size_list:
+    for omega in [0.6]:
+        for eta1 in [0.5]:
+            for eta2 in [0.5]:
+                for max_vel in [0.2]:
+                    for pop_size in [100]:
                         best_fitness = []
                         
                         # Defining the population and algorithm objects in pygmo
@@ -98,7 +99,6 @@ def solve_pso(dim, bias, bounds):
     fitness_curve = np.array([np.min(np.array(best_params_dict['Fitness_curve'][i:i+best_params_dict['pop_size']])) for i in range(0,len(best_params_dict['Fitness_curve']), best_params_dict['pop_size'])])
     
     # Plotting
-    fig = plt.figure(figsize=(16, 13))
     plt.plot(fitness_curve)
     plt.title("Convergence curve: Shifted Rastrigins function using PSO")
     plt.xlabel("Iterations")
@@ -107,6 +107,9 @@ def solve_pso(dim, bias, bounds):
         plt.savefig("rastrigin_50_pso.png")   
     else:
         plt.savefig("rastrigin_500_pso.png")               
+        # Saving solution to csv
+        df = pd.DataFrame({'solution':best_params_dict['Solution']}) 
+        df.to_csv("solution_500.csv")
 
 if __name__=="__main__":
     
@@ -124,7 +127,7 @@ if __name__=="__main__":
     # Solve
     best_fitness = []
     print("##### PSO for Dimension:50 #####\n")
-    solve_pso(dim[0], bias, bounds)
+    #solve_pso(dim[0], bias, bounds)
     print("##### PSO for Dimension:500 #####\n")
     solve_pso(dim[1], bias, bounds)
 
