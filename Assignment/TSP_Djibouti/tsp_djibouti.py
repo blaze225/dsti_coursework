@@ -27,8 +27,8 @@ def solve_ga(problem_fit):
             best_state, best_fitness, fitness_curve = mlrose.genetic_alg(problem=problem_fit,
                                                                          pop_size=p,
                                                                          mutation_prob=m,
-                                                                         max_attempts=1000,
-                                                                         max_iters=10000,
+                                                                         max_attempts=500,
+                                                                         max_iters=5000,
                                                                          random_state = np.random.seed(7),
                                                                          curve=True)
             # End timer
@@ -48,7 +48,7 @@ def solve_ga(problem_fit):
     print("\tPopulation: ",best_params_dict['Population'])
     print("\tMutation probability: ", best_params_dict['Mutation'])
     print("\tMax Attempts at each step: 100")
-    print("\tStopping Criterion = Max Iterations of the algorithm: 1000")
+    print("\tStopping Criterion = Max Iterations of the algorithm: 5000")
     print("Results:")
     print("\tSolution (Order of city traversal by index):  ", best_params_dict['Solution'])
     print("\tFitness: ", round(best_params_dict['Fitness'],2))
@@ -88,8 +88,8 @@ def solve_sa(problem_fit):
                         t_start = time.time()
                         best_state, best_fitness, fitness_curve = mlrose.simulated_annealing(problem=problem_fit, 
                                                                                  schedule=schedule,
-                                                                                 max_attempts=1000,
-                                                                                 max_iters = 10000,
+                                                                                 max_attempts=500,
+                                                                                 max_iters = 5000,
                                                                                  random_state = np.random.seed(7),
                                                                                  curve=True)
                         # End timer
@@ -114,7 +114,7 @@ def solve_sa(problem_fit):
     print("\tMin Temperature: ",best_params_dict['Min_temp'])
     print("\tDecay rate: ",best_params_dict['Decay'])
     print("\tMax Attempts at each step: 100")
-    print("\tStopping Criterion = Max Iterations of the algorithm: 10000")
+    print("\tStopping Criterion = Max Iterations of the algorithm: 5000")
     print("Results:")
     print("\tSolution (Order of city traversal by index):  ", best_params_dict['Solution'])
     print("\tFitness: ", round(best_params_dict['Fitness'],2))

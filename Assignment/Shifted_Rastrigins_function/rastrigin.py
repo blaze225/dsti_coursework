@@ -15,10 +15,10 @@ class shifted_rastrigins_function:
     def fitness(self, x):
         global best_fitness
         F = 0
-        for i in range(dim - 1):
+        for i in range(self.dim - 1):
             z = x[i] - rastrigin[i]
-            F += z**2 - (10 * math.cos(2 * math.pi * z)) + 10
-        result = F + f_bias
+            F += z**2 - (10 * np.cos(2 * np.pi * z)) + 10
+        result = F + self.bias
         best_fitness.append(result)
         return [result]
 

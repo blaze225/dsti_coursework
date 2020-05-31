@@ -54,7 +54,7 @@ def solve_pso(dim, bias, bounds):
             for eta2 in eta2_list:
                 for max_vel in max_vel_list:
                     for pop_size in population_size_list:
-                        print("*",end='')
+
                         best_fitness = []
                         
                         # Defining the population and algorithm objects in pygmo

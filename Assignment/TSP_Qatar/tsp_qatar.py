@@ -88,8 +88,8 @@ def solve_sa(problem_fit):
                         t_start = time.time()
                         best_state, best_fitness, fitness_curve = mlrose.simulated_annealing(problem=problem_fit, 
                                                                                  schedule=schedule,
-                                                                                 max_attempts=1000,
-                                                                                 max_iters = 10000,
+                                                                                 max_attempts=500,
+                                                                                 max_iters = 5000,
                                                                                  random_state = np.random.seed(7),
                                                                                  curve=True)
                         # End timer
@@ -132,9 +132,9 @@ if __name__=="__main__":
     # Reading data
     tsp = tsplib95.load('qa194.tsp')
     tsp_data = tsp.as_name_dict()
-    print("##### Data #####\n")
-    print(tsp_data)
-    print("\n")
+    # print("##### Data #####\n")
+    # print(tsp_data)
+    # print("\n")
     
     # Getting the city coordinates
     cities = [tsp_data['node_coords'][k] for k in tsp_data['node_coords']]
