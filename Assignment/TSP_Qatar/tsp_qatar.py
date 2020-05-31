@@ -16,7 +16,7 @@ def solve_ga(problem_fit):
     best_params_dict = {}
     
     # Parameter lists
-    populuation_list = [100, 1000, 10000]
+    populuation_list = [100, 500, 1000]
     mutation_prob_list = [0.01,0.1,0.5]
 
     # Solve
@@ -27,8 +27,8 @@ def solve_ga(problem_fit):
             best_state, best_fitness, fitness_curve = mlrose.genetic_alg(problem=problem_fit,
                                                                          pop_size=p,
                                                                          mutation_prob=m,
-                                                                         max_attempts=1000,
-                                                                         max_iters=10000,
+                                                                         max_attempts=100,
+                                                                         max_iters=5000,
                                                                          random_state = np.random.seed(7),
                                                                          curve=True)
             # End timer
@@ -56,10 +56,10 @@ def solve_ga(problem_fit):
 
     # Plotting
     plt.plot(-(best_params_dict['Fitness_curve']))
-    plt.title("Convergence curve: TSP-Djibouti using Genetic Algorithm")
+    plt.title("Convergence curve: TSP-Qatar using Genetic Algorithm")
     plt.xlabel("Iterations")
     plt.ylabel("Fitness")
-    plt.savefig("tsp_djibouti_ga.png")
+    plt.savefig("tsp_qatar_ga.png")
     
 def solve_sa(problem_fit):
     """ Solving using Simulated Annealing """
@@ -122,19 +122,19 @@ def solve_sa(problem_fit):
     
     # Plotting
     plt.plot(-(best_params_dict['Fitness_curve']))
-    plt.title("Convergence curve: TSP-Djibouti using Simulated Annealing")
+    plt.title("Convergence curve: TSP-Qatar using Simulated Annealing")
     plt.xlabel("Iterations")
     plt.ylabel("Fitness")
-    plt.savefig("tsp_djibouti_sa.png")
+    plt.savefig("tsp_qatar_sa.png")
 
 if __name__=="__main__":
     
     # Reading data
-    tsp = tsplib95.load('dj38.tsp')
+    tsp = tsplib95.load('qa194.tsp')
     tsp_data = tsp.as_name_dict()
-    #print("##### Data #####\n")
-    # print(tsp_data)
-    # print("\n")
+    print("##### Data #####\n")
+    print(tsp_data)
+    print("\n")
     
     # Getting the city coordinates
     cities = [tsp_data['node_coords'][k] for k in tsp_data['node_coords']]
