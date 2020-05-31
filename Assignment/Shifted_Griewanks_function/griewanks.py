@@ -53,11 +53,11 @@ def solve_pso(dim, bias, bounds):
     prob = problem(shifted_griewanks_function(dim, bias, bounds))
     
     # Solve
-    for omega in [0.6]:
-        for eta1 in [1]:
-            for eta2 in [3]:
-                for max_vel in [0.4]:
-                    for pop_size in [100]:
+    for omega in omega_list:
+        for eta1 in eta1_list:
+            for eta2 in eta2_list:
+                for max_vel in max_vel_list:
+                    for pop_size in population_size_list:
                         best_fitness = []
                         
                         # Defining the population and algorithm objects in pygmo
@@ -95,7 +95,7 @@ def solve_pso(dim, bias, bounds):
     print("-- Results --")
     print("\tSolution:  ", best_params_dict['Solution'])
     print("\tFitness: ", round(best_params_dict['Fitness'][0],2))
-    print("Stopping Criterion = Number of generations: 1000")
+    print("Stopping Criterion = Number of generations: 2000")
     print("Computational Time: ",best_params_dict['Time'], " seconds\n\n")
     
     # Get min for each swarm of particles in an iteration/generation
@@ -130,7 +130,7 @@ if __name__=="__main__":
     # Solve
     best_fitness = []
     print("##### PSO for Dimension:50 #####\n")
-    #solve_pso(dim[0], bias, bounds)
+    solve_pso(dim[0], bias, bounds)
     print("##### PSO for Dimension:500 #####\n")
     solve_pso(dim[1], bias, bounds)
 

@@ -64,17 +64,17 @@ I used the Particle Swarm Optimzation algorithm as in general it works well for 
 * Bias = -180   
 * Population (Particle Swarm size):  200
 * Omega (inertia factor):  0.6
-* eta1 (social component):  2
-* eta2 (cognitive component):  2
-* Maximum allowed particle velocity:  0.6
+* eta1 (social component):  1
+* eta2 (cognitive component):  3
+* Maximum allowed particle velocity:  0.4
 	
 4. Results
 * Solution: [solution_500](solution_500.csv)
 
-* Fitness: -450.0
+* Fitness: -407.22
 
-5. Stopping Criterion = Number of generations: 3000
-6. Computational Time:  44.74 seconds
+5. Stopping Criterion = Number of generations: 2000
+6. Computational Time:  774.16 seconds
 7. Convergence Curve
 
 ![griewank_500_pso](images/griewank_500_pso.png)

@@ -47,17 +47,17 @@ def solve_pso(dim, bias, bounds):
     eta1_list = [0.5, 1, 2, 3]
     eta2_list = [0.5, 1, 2, 3]
     max_vel_list = [0.2, 0.4, 0.6, 0.8]
-    population_size_list = [dim, dim*2, dim*3]
+    population_size_list = [50, 100, 200]
     
     # Defining the problem in pygmo
     prob = problem(shifted_ackleys_function(dim, bias, bounds))
     
     # Solve
-    for omega in [0.2]:
-        for eta1 in [1]:
-            for eta2 in [1]:
-                for max_vel in [0.4]:
-                    for pop_size in [100]:
+    for omega in omega_list:
+        for eta1 in eta1_list:
+            for eta2 in eta2_list:
+                for max_vel in max_vel_list:
+                    for pop_size in population_size_list:
                         best_fitness = []
                         
                         # Defining the population and algorithm objects in pygmo
@@ -130,7 +130,7 @@ if __name__=="__main__":
     # Solve
     best_fitness = []
     print("##### PSO for Dimension:50 #####\n")
-    #solve_pso(dim[0], bias, bounds)
+    solve_pso(dim[0], bias, bounds)
     print("##### PSO for Dimension:500 #####\n")
     solve_pso(dim[1], bias, bounds)
 

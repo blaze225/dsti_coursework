@@ -50,11 +50,11 @@ def solve_pso(dim, bias, bounds):
     prob = problem(shifted_rastrigins_function(dim, bias, bounds))
     
     # Solve
-    for omega in [0.6]:
+    for omega in [0.2]:
         for eta1 in [0.5]:
             for eta2 in [0.5]:
                 for max_vel in [0.2]:
-                    for pop_size in [100]:
+                    for pop_size in [50]:
                         best_fitness = []
                         
                         # Defining the population and algorithm objects in pygmo
