@@ -44,17 +44,17 @@ def solve_pso(dim, bias, bounds):
     eta1_list = [0.5, 1, 2, 3]
     eta2_list = [0.5, 1, 2, 3]
     max_vel_list = [0.2, 0.4, 0.6, 0.8]
-    population_size_list = [dim, dim*2]
+    population_size_list = [50, 100, 200]
     
     # Defining the problem in pygmo
     prob = problem(shifted_schwefels_function(dim, bias, bounds))
     
     # Solve
     for omega in [0.6]:
-        for eta1 in [2]:
-            for eta2 in [2]:
+        for eta1 in [1]:
+            for eta2 in [3]:
                 for max_vel in [0.6]:
-                    for pop_size in [200]:
+                    for pop_size in [100]:
                         best_fitness = []
                         
                         # Defining the population and algorithm objects in pygmo
@@ -127,6 +127,62 @@ def solve_sa(dim, bias, bounds):
     # Defining the problem in pygmo
     prob = problem(shifted_schwefels_function(dim, bias, bounds))
     
+    for ts in ts_list:
+        for tf in tf_list:
+            for t_adj in n_t_adj:
+                best_fitness = []
+                        
+                # Defining the population and algorithm objects in pygmo
+                pop = population(prob, pop_size)
+                algo = algorithm(simulated_annealing(Ts=ts, Tf=tf, n_T_adj =t_adj, seed = 7))
+                #algo.set_verbosity(50)
+
+                # Start timer
+                t_start = time.time()
+                # Solve
+                result = algo.evolve(pop)
+                # End timer
+                t_end = time.time()
+                
+                # Storing the best result
+                if result.champion_f < best_fitness_curr:
+                    best_fitness_curr = result.champion_f
+                    best_params_dict['Fitness'] = result.champion_f
+                    best_params_dict['Solution'] = result.champion_x
+                    best_params_dict['Ts'] = ts
+                    best_params_dict['Tf'] = tf
+                    best_params_dict['n_t_adj'] = t_adj
+                    best_params_dict['Fitness_curve'] = best_fitness
+                    best_params_dict['Time'] = round(t_end - t_start, 2)
+    
+    # Print the best result
+    print("-- Best Parameters --")
+    print("\tStarting Temperature: ", best_params_dict['Ts'])
+    print("\tFinal Temperature: ", best_params_dict['Tf'])
+    print("\tNumber of adjustments of the search at a constant temperature ",best_params_dict['n_t_adj'])
+    print("-- Results --")
+    print("\tSolution:  ", best_params_dict['Solution'])
+    print("\tFitness: ", round(best_params_dict['Fitness'][0],2))
+    print("Stopping Criterion = Number of generations: 1000")
+    print("Computational Time: ",best_params_dict['Time'], " seconds\n\n")
+    
+    # Get min for each swarm of particles in an iteration/generation
+    fitness_curve = np.array([np.min(np.array(best_params_dict['Fitness_curve'][i:i+best_params_dict['pop_size']])) for i in range(0,len(best_params_dict['Fitness_curve']), best_params_dict['pop_size'])])
+    
+    # Plotting
+    fig = plt.figure(figsize=(16, 13))
+    plt.plot(fitness_curve)
+    plt.title("Convergence curve: Shifted Schwefels function using SA")
+    plt.xlabel("Iterations")
+    plt.ylabel("Fitness")
+    if dim == 50:
+        plt.savefig("schwefel_50_sa.png")    
+    else:
+        plt.savefig("schwefel_500_sa.png")
+        # Saving solution to csv
+        df = pd.DataFrame({'solution':best_params_dict['Solution']}) 
+        df.to_csv("solution_500.csv") 
+
 if __name__=="__main__":
     
     # Read shift data

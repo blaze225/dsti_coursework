@@ -69,21 +69,11 @@ I used the Particle Swarm Optimzation algorithm as in general it works well for 
 * Maximum allowed particle velocity:  0.6
   
 4. Results
-* Solution: 
->   [  2.07146334  -7.09036583 -56.45810788 -97.64203387  -4.51376283
-   -48.29543848  -1.98130905 -83.60351714 -74.20433786 -63.00528048
-   -60.85014426 -54.7200589   -2.54509636 -26.64702254 -88.29263814
-   -57.4698485  -48.26019203 -45.5183427  -76.77703296 -75.24139582
-   -50.1273526  -79.54191271 -63.1155919  -57.89572572  -7.52380087
-   -29.4052608  -24.13928642 -72.68882483 -52.95725676 -46.17708897
-   -72.44339744 -72.16701849 -51.04180411 -60.55738383 -96.91048076
-   -82.98175719 -97.4332498  -55.15329957 -57.69084736 -61.67771379
-    -5.72786962 -69.69367485 -19.28751659 -49.19202405  -3.0667256
-   -81.87778972 -14.6115781  -67.74776232 -34.86121886 -85.59605272]
-* Fitness: -449.98
+* Solution: ![solution_500](solution_500.csv)
+* Fitness: -351.11
 
-5. Stopping Criterion = Number of generations: 3000
-6. Computational Time:  17.65  seconds
+5. Stopping Criterion = Number of generations: 2000
+6. Computational Time:  104.47  seconds
 7. Convergence Curve
 
 ![schwefels_50_pso](images/schwefels_50_pso.png)

@@ -148,7 +148,7 @@ if __name__=="__main__":
     print("###### Solving using Genetic Algorithm ######\n")
     solve_ga(problem_fit)
     print("###### Solving using Simulated Annealing Algorithm ######\n")
-    #solve_sa(problem_fit)
+    solve_sa(problem_fit)
 
 
     

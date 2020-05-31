@@ -1,8 +1,8 @@
-# Continuous optimization: Shifted Rosenbrock's Function
+# Continuous optimization: Shifted Rastrigin's Function
 
 ## Definition of the Function
 
-![sphere_definition](images/rosenbrock_definition.png)
+![sphere_definition](images/rastrigin_definition.png)
 
 ## Solution
 
