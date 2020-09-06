@@ -1,0 +1,328 @@
+---
+title: "Analysing Lung Cancer Survival Time"
+author: Mohammad Saad Khan
+date: "`r format(Sys.time(), '%B %e, %Y')`"
+fontsize: 10pt
+output: 
+    pdf_document:
+      toc: yes
+---
+\newpage
+
+# Description
+
+## Data source 
+The data is taken from the data challenge *Predicting lung cancer survival time by OWKIN* on Challenge data. ([Link](https://challengedata.ens.fr/challenges/33))
+
+## Data Description
+The data is based on CT scans of the lungs of patients diagnosed with lung cancer.  
+The data consists of four elements:  
+1. Survival time and censorship (1=death observed, 0=escaped from study)  
+2. Images (one scan and one mask per patient)  
+3. Radiomics features (an ensemble of 53 quantitative features per patient, extracted from the scan)   
+4. Clinical data (contains basic meta-information for each patient)   
+
+**Note**: Since the radiomics features were extracted from the scans, I will not be using the images in the analysis. 
+
+```{r message=FALSE, warning=FALSE}
+# Loading the packages
+library(survival)
+library(mgcv)
+library(survminer)
+```
+
+# Reading the data
+
+```{r}
+surv <- read.csv("survival_data.csv")
+radiomics <- read.csv("radiomics.csv")
+clinical <- read.csv("clinical_data.csv", na.strings = c("nan"))
+# Converting entries to lower case in column Histology
+clinical$Histology <- as.factor(tolower(clinical$Histology))
+# Converting M,N and T stage to categorical variables
+clinical$Mstage <- as.factor(clinical$Mstage)
+clinical$Nstage <- as.factor(clinical$Nstage)
+clinical$Tstage <- as.factor(clinical$Tstage)
+# Merging into a single dataframe
+df <- merge(surv, clinical)
+df <- merge(df, radiomics)
+# Displaying other features as radiomics features are too many
+head(merge(surv,clinical))
+```
+
+# Understanding features: Brief Descriptive Satistics
+
+```{r}
+cat("Features:",length(df),"\n")
+cat("Sample size:",nrow(df),"\n")
+# Survival Time
+summary(df$SurvivalTime)
+```
+
+**Histology**
+
+```{r}
+# Non Small Cell Lung Cancer can itself be split into four major subtypes 
+# based on histology observations: 
+# squamous cell carcinoma, large cell carcinoma, adenocarcinoma and a mixture of all
+table(df$Histology, useNA = "always")
+# Event (1=death observed, 0=escaped from study)
+table(df$Event)
+```
+
+**TNM staging (known prognostic biomarker for survival)**
+
+```{r}
+# Mstage
+summary(df$Mstage)
+# Nstage
+summary(df$Nstage)
+# Tstage
+summary(df$Tstage)
+```
+
+```{r}
+# SourceDataset
+summary(df$SourceDataset)
+# Age
+summary(df$age)
+```
+
+**Radiomics features**  
+Details over each computed feature can be found at [link](https://pyradiomics.readthedocs.io/en/v1.0/radiomics.html#)
+
+Since there are a lot of features (53) I will describe a few important ones which are used by the baseline model in the challenge
+```{r}
+# Sphericity: a measure of the roundness of the shape of the tumor region relative to a sphere
+summary(df$original_shape_Sphericity)
+# SurfaceVolumeRatio: measure of the compactness of the tumor, related to its size
+summary(df$original_shape_SurfaceVolumeRatio)
+# Maximum3DDiameter: The biggest diameter measurable from the tumor volume
+summary(df$original_shape_Maximum3DDiameter)
+# JointEntropy: specifying the randomness in the image pixel values
+summary(df$original_glcm_JointEntropy)
+# Inverse Difference Normalized (IDN): a measure of the local homogeneity of the tumor
+summary(df$original_glcm_Idn)
+# Inverse Difference Moment Normalized (IDMN): another measurement of the 
+# local homogeneity of the tumor
+summary(df$original_glcm_Idmn)
+```
+
+# Modelling impact of Age
+
+```{r fig.height = 3}
+# Distribution
+hist(df$age)
+# Applying Logistic Regression (family=binomial)
+age_fit1 <- glm(Event ~ I(age/10), data = df, family = "binomial")
+summary(age_fit1)
+# Odds Ratio
+exp(coef(age_fit1)[2])
+```
+
+**Observations**  
+* The positive coefficient (0.02370) means a positive association with risk of death.  
+* The p value (0.0602) is greater than 0.05 which means that the relationship between age and risk of death is not significant  
+* The Odds Ratio for increase in age by a decade is 1.267465 which means about 26% increase in the risk   
+
+**Checking for Non Linear effects**
+
+```{r}
+# Fitting a smoothing spline for age using a Generalized additive model
+age_fit2 <- gam(Event ~ s(age), data = df, family = "binomial")
+summary(age_fit2)
+```
+
+The edf(estimated degrees of freedom) is 1.7 which implies close to a quadratic relationship which is ineed confirmed when we look at the plot.
+```{r fig.height = 4}
+plot(age_fit2)
+```
+
+```{r}
+# Checking for quadratic realtionship
+age_fit3 <- glm(Event ~ age + I(age^2), data = df, family = "binomial")
+summary(age_fit3)
+```
+The p value for both linear and quadratic terms is similar which indicates that both are important here. This confirms our previous hypothesis
+
+# Modelling impact of Histology
+
+```{r}
+# Distribution wrt Event
+with(df, table(Event, Histology))
+# Logistic Regression
+hist_fit <- glm(Event ~ Histology , data = df, family = "binomial")
+summary(hist_fit)
+```
+
+This indicates that the category "nos" (mixture of all subtypes) has a very significant relation with death. The categories "large cell" and "squamous cell carcinoma" have signifcant impact when compared to the category "adenocarcinoma"
+
+**Odds Ratio  and Confidence Interval for type "nos"**
+
+```{r message=FALSE, warning=FALSE}
+# Odds Ratio
+exp(1.2787)
+# Confidence Interval
+exp(confint(hist_fit)[3,])
+```
+So a patient having a Histology of "nos" (mixture of all subtypes) has more than 3 times the risk as compared to other sub types
+
+# Modelling impact of TNM Staging
+```{r}
+# Creating a new column combining the three stages
+df$TNMstage <-paste(df$Tstage,df$Nstage,df$Mstage)
+df$TNMstage <- as.factor(df$TNMstage)
+# Distribution wrt Event
+with(df, table(Event, TNMstage))
+```
+
+```{r}
+# Logistic Regression
+tnm_fit <- glm(Event ~ TNMstage , data = df, family = "binomial")
+summary(tnm_fit)
+```
+
+A few TNM stage groupings are at a higher risk: 2 0 0, 2 2 0 (highest), 3 2 0, 4 2 0
+
+**Odds ratio and Confidence Interval for TNM grouping 2 2 0**
+
+```{r message=FALSE, warning=FALSE}
+# Odds ratio 
+exp(1.3724)
+# Confidence Interval
+exp(confint(tnm_fit)[8,])
+```
+A patient with TNM grouping 2 2 0 is at 4 times more risk than other groupings.
+
+
+# Impact of Radiomics Features
+```{r message=FALSE, warning=FALSE}
+# Using the 6 important features
+fit <- glm(Event ~ original_shape_Sphericity + original_shape_SurfaceVolumeRatio + original_shape_Maximum3DDiameter + original_glcm_JointEntropy + original_glcm_Idn + original_glcm_Idmn, data = df, family = "binomial")
+summary(fit)
+```
+**Observations**  
+* The only p value that indicates any impact on risk is of "original_glcm_Idn", rest are quite high meaning no significant impact  
+* These are tumor features which intuitively should have high impact but we see the contrary here 
+
+# Impact of SourceDataset
+
+```{r}
+fit <- glm(Event ~ SourceDataset ,data = df, family = "binomial")
+summary(fit)
+```
+**Observations**  
+* The small p values indicate a very highly significant impact on risk of death
+
+# Modelling multiple covariates
+```{r}
+fit <- glm(Event ~ I(age/10) + original_glcm_Idn  + SourceDataset + Histology 
+           + TNMstage , data = df, family = "binomial")
+summary(fit)
+```
+**Observations**  
+1. The risk associated with age and some TNM groupings becomes stronger   
+2. The risk associated with various sub groups of Histology is not at all significant now. This seems to be an interesting oberservation as it suggests that type of Histology does not impact the risk of death. 
+
+
+```{r}
+# Odds ratio for age
+exp(0.4097)
+```
+The Odds Ratio for decade increase in age now becomes 1.5 (previously 1.26)
+
+```{r}
+# Odds ratio for TNM grouping 2 2 0
+exp(1.6823)
+```
+The Odds Ratio for TNM is 5.37 now (previously 3.94)
+
+# Survival Analysis
+
+## Kaplan-Meyer Estimator
+```{r}
+# Taking SurvivalTime in years
+KM <- survfit(Surv(SurvivalTime/365, Event)~1, data=df)
+KM
+```
+The median survival time is 988 days or 2.7 years
+
+The following plot shows the survival rate of patients
+```{r fig.height = 4, fig.width = 6}
+p1 <- ggsurvplot(KM, risk.table = TRUE, main = "Kaplan-Meier estimator",
+     ylab = "Survival probability",
+     xlab = "time (years)")
+p1$plot
+```
+
+The following table indicates the patients still alive. 
+```{r fig.height = 1.2, fig.width = 5, message=FALSE, warning=FALSE}
+p1$table  
+```
+
+### What's the estimated probability of surviving for (at least) 1 year?
+```{r}
+summary(KM, time = 1)
+```
+It is 73.2% which means that there are high chances of surviving.
+
+## Survival differences between various TNMstage groupings
+
+### A few TNMstage groupings like "2 2 0", "4 2 0" were at higher risk. Can we confirm the same here?
+```{r}
+survdiff(Surv(I(SurvivalTime/365), Event)~TNMstage, data = df)
+```
+The extremely low p value indicates that there is a lot of difference between the TNMstage groupings
+
+```{r fig.height = 5, fig.width = 8.5}
+p2 <- ggsurvplot(survfit(Surv(SurvivalTime/365, Event) ~ TNMstage, data=df), pval = TRUE)
+p2$plot
+```
+
+Looking at the graph it seems that there are more than 2-3 TNM groupings which stand out and have higher risk but "2 2 0", "4 2 0" are not the highest risk ones 
+
+## Survival differences between various Histology sub groups
+### From our previous analysis "nos" group is supposed to be the riskiest. Can we confirm the same here?
+```{r}
+survdiff(Surv(SurvivalTime/365, Event)~Histology, data = df)
+```
+The low p value indicates that there is significant difference between the groups which is expected from our analysis.
+
+```{r fig.height = 5, fig.width = 9.5}
+p3 <- ggsurvplot(survfit(Surv(SurvivalTime/365, Event) ~ Histology, data=df), pval = TRUE)
+p3$plot
+```
+Indeed "nos" has the lowest Survival Time.
+
+# Cox Regression
+
+## On age 
+```{r}
+cph <- coxph(Surv(SurvivalTime, Event) ~ I(age/10) , data = df)
+summary(cph)
+```
+**Observations**
+
+* The Hazard Ratio (HR) is 1.16 with a Confidence Interval of (0.9727,1.388)
+* HR is greater than 1 which indicates that age is positively associated with the event of death  
+* The p value is large which is in tune with our previous results indicating that age is not a highly significant factor
+
+## On Histology
+
+```{r message=FALSE, warning=FALSE}
+cph <- coxph(Surv(SurvivalTime, Event) ~ Histology , data = df)
+summary(cph)
+```
+**Observations**  
+* As previously observed, "nos" group has the highest significance
+* All sub groups except "adenocarcinoma" (not shown in the test) have an HR greater than 1 implying positive association with risk of death. This was expected
+* The p values are small which is in line with our previous findings
+
+## On TNMstage
+
+```{r message=FALSE, warning=FALSE}
+cph <- coxph(Surv(SurvivalTime, Event) ~ TNMstage , data = df)
+cph
+```
+
+
