@@ -1,0 +1,6 @@
+UPDATE TOP (1) Sales.InvoiceLines
+SET UnitPrice = UnitPrice + 20
+FROM Sales.Customers as C
+JOIN Sales.Invoices as I ON C.CustomerID = I.CustomerID
+JOIN Sales.InvoiceLines as IL ON I.InvoiceID = IL.InvoiceID
+WHERE C.CustomerID = 1060;

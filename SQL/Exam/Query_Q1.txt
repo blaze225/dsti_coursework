@@ -1,0 +1,18 @@
+SELECT C.CustomerID, C.CustomerName, COUNT(O.OrderID) as TotalNBOrders, COUNT(I.InvoiceID) as TotalNBInvoices, 
+		SUM(Order_values.total_order_value) as OrdersTotalValue, 
+		SUM(Invoice_values.total_invoice_value) as InvoicesTotalValue,
+		(SUM(Invoice_values.total_invoice_value) - SUM(Order_values.total_order_value)) as AbsoluteValueDifference
+FROM Sales.Customers as C
+JOIN Sales.Invoices as I ON C.CustomerID = I.CustomerID
+JOIN Sales.Orders as O ON I.OrderID = O.OrderID
+-- Joining with two new tables containing respective IDs with the total value
+JOIN	(   SELECT OrderID, SUM( Quantity*UnitPrice) as total_order_value
+			FROM Sales.OrderLines
+			GROUP BY OrderID
+		) as Order_values ON O.OrderID = Order_values.OrderID
+JOIN	(   SELECT InvoiceID, SUM( Quantity*UnitPrice) as total_invoice_value
+			FROM Sales.InvoiceLines
+			GROUP BY InvoiceID
+		) as Invoice_values ON I.InvoiceID = Invoice_values.InvoiceID
+GROUP BY C.CustomerID, C.CustomerName
+ORDER BY AbsoluteValueDifference DESC,TotalNBOrders ASC, C.CustomerName;

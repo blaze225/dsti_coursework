@@ -1,0 +1,176 @@
+USE [WideWorldImporters]
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE OR ALTER PROCEDURE [dbo].[ReportCustomerTurnover]
+	-- Add the parameters for the stored procedure here
+	@Choice int = 1, @Year int = 2013
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	IF @Choice = 1
+	BEGIN
+		-- Checking whether the table name already exists and dropping it 
+		DROP TABLE IF EXISTS ResultSaadQ31
+		-- Create the result table structure
+		CREATE TABLE ResultSaadQ31(CustomerName varchar(255), [Jan] decimal(10,2), [Feb] decimal(10,2), [Mar] decimal(10,2), 
+									[Apr] decimal(10,2), [May] decimal(10,2), [Jun] decimal(10,2), [Jul] decimal(10,2), 
+									[Aug] decimal(10,2), [Sep] decimal(10,2), [Oct] decimal(10,2), [Nov] decimal(10,2), 
+									[Dec] decimal(10,2));
+		DECLARE @currentCustomerID int;
+		DECLARE @currentCustomerName nvarchar(max);
+
+		-- Create a cursor for CustomerIDs
+		DECLARE CustomerCursor CURSOR FOR 
+								SELECT CustomerID
+								FROM Sales.Customers
+								ORDER BY CustomerName ;
+		OPEN CustomerCursor;
+		FETCH NEXT FROM CustomerCursor INTO @currentCustomerID;
+		-- Iterate over CustomerIDs
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			-- Get Current Customer Name
+			SELECT @currentCustomerName = CustomerName FROM Sales.Customers WHERE CustomerID = @currentCustomerID
+			DECLARE @yearPresent int;
+
+			-- Find whether @currentYear is present for @currentCustomerID
+			SELECT @yearPresent = coalesce( (SELECT TOP 1 c.CustomerID
+			FROM Sales.Customers as c
+			JOIN Sales.Invoices as i on c.CustomerID = i.CustomerID
+			JOIN Sales.InvoiceLines as il on i.InvoiceID = il.InvoiceID
+			WHERE c.CustomerID = @currentCustomerID AND YEAR(InvoiceDate) = @Year ), 0)
+	
+			-- @currentYear is not present
+			IF @yearPresent = 0
+			BEGIN
+				INSERT INTO ResultSaadQ31 SELECT @currentCustomerName as [CustomerName], 0.00 as [Jan], 0.00 as [Feb], 0.00 as [Mar], 0.00 as [Apr], 0.00 as [May], 0.00 as [Jun], 
+						0.00 as [Jul], 0.00 as [Aug], 0.00 as [Sep], 0.00 as [Oct], 0.00 as [Nov] ,0.00 as [Dec];
+			END
+			-- @currentYear is present
+			ELSE
+			BEGIN
+				-- Insert a single row with CustomerName and values for each month
+					INSERT INTO ResultSaadQ31
+					SELECT pivoted.CustomerName, COALESCE(pivoted.[1],0.00), COALESCE(pivoted.[2],0.00), COALESCE(pivoted.[3],0.00),
+							COALESCE(pivoted.[4],0.00), COALESCE(pivoted.[5],0.00), COALESCE(pivoted.[6],0.00),
+							COALESCE(pivoted.[7],0.00), COALESCE(pivoted.[8],0.00), COALESCE(pivoted.[9],0.00),
+							COALESCE(pivoted.[10],0.00), COALESCE(pivoted.[11],0.00), COALESCE(pivoted.[12],0.00)
+					FROM
+					(
+						SELECT c.CustomerName, MONTH(InvoiceDate) as invoice_month, Quantity*UnitPrice as cost
+						FROM Sales.Invoices as i
+						JOIN Sales.InvoiceLines as il on i.InvoiceID = il.InvoiceID
+						JOIN Sales.Customers as c on i.CustomerID = c.CustomerID
+						WHERE i.CustomerID = @currentCustomerID  and YEAR(InvoiceDate) = @Year
+					) as temp
+					PIVOT 
+					( SUM(temp.cost)
+					  FOR temp.invoice_month in ([1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11],[12])
+					) as pivoted
+			END
+			FETCH NEXT FROM CustomerCursor INTO @currentCustomerID;
+		END
+		CLOSE CustomerCursor;
+		DEALLOCATE CustomerCursor;
+		SELECT * FROM ResultSaadQ31 ORDER BY CustomerName;
+	END
+
+	IF @Choice = 2
+	BEGIN
+		-- Checking whether the table name already exists and dropping it 
+		DROP TABLE IF EXISTS ResultSaadQ32
+		-- Create the result table structure
+		CREATE TABLE ResultSaadQ32(CustomerName varchar(255), [Q1] decimal(10,2), [Q2] decimal(10,2), [Q3] decimal(10,2), 
+									[Q4] decimal(10,2));
+		DECLARE @currentCustomerID2 int;
+		DECLARE @currentCustomerName2 nvarchar(max);
+
+		-- Create a cursor for CustomerIDs
+		DECLARE CustomerCursor CURSOR FOR 
+								SELECT CustomerID
+								FROM Sales.Customers
+								ORDER BY CustomerName ;
+		OPEN CustomerCursor;
+		FETCH NEXT FROM CustomerCursor INTO @currentCustomerID2;
+		-- Iterate over CustomerIDs
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			-- Get Current Customer Name
+			SELECT @currentCustomerName = CustomerName FROM Sales.Customers WHERE CustomerID = @currentCustomerID2
+			DECLARE @yearPresent2 int;
+
+			-- Find whether @currentYear is present for @currentCustomerID
+			SELECT @yearPresent2 = coalesce( (SELECT TOP 1 c.CustomerID
+			FROM Sales.Customers as c
+			JOIN Sales.Invoices as i on c.CustomerID = i.CustomerID
+			JOIN Sales.InvoiceLines as il on i.InvoiceID = il.InvoiceID
+			WHERE c.CustomerID = @currentCustomerID2 AND YEAR(InvoiceDate) = @Year ), 0)
+	
+			-- @currentYear is not present
+			IF @yearPresent2 = 0
+			BEGIN
+				INSERT INTO ResultSaadQ32 SELECT @currentCustomerName as [CustomerName], 0.00 as [Q1], 0.00 as [Q2], 
+												0.00 as [Q3], 0.00 as [Q4];
+			END
+			-- @currentYear is present
+			ELSE
+			BEGIN
+				-- Insert a single row with CustomerName and values for each month
+					INSERT INTO ResultSaadQ32
+					SELECT pivoted.CustomerName, COALESCE(pivoted.[1],0.00), COALESCE(pivoted.[2],0.00), 
+							COALESCE(pivoted.[3],0.00), COALESCE(pivoted.[4],0.00)
+					FROM
+					(
+						SELECT c.CustomerName, DATEPART(QUARTER,InvoiceDate) as invoice_quarter, Quantity*UnitPrice as cost
+						FROM Sales.Invoices as i
+						JOIN Sales.InvoiceLines as il on i.InvoiceID = il.InvoiceID
+						JOIN Sales.Customers as c on i.CustomerID = c.CustomerID
+						WHERE i.CustomerID = @currentCustomerID2  and YEAR(InvoiceDate) = @Year
+					) as temp
+					PIVOT 
+					( SUM(temp.cost)
+					  FOR temp.invoice_quarter in ([1],[2],[3],[4])
+					) as pivoted
+			END
+			FETCH NEXT FROM CustomerCursor INTO @currentCustomerID2;
+		END
+		CLOSE CustomerCursor;
+		DEALLOCATE CustomerCursor;
+		SELECT * FROM ResultSaadQ32 ORDER BY CustomerName;
+	END
+
+
+	IF @Choice = 3	-- Selecting all customer names and total yearly turnover (invoiced value)
+	BEGIN	
+		SELECT pivoted.CustomerName, COALESCE(SUM(pivoted.[2013]),0) as [2013], COALESCE(SUM(pivoted.[2014]),0) as [2014], 
+				COALESCE(SUM(pivoted.[2015]),0) as [2015], COALESCE(SUM(pivoted.[2016]),0) as [2016]
+			FROM
+			-- Joining tables Sales.Invoices, Sales.Customers, Sales.InvoiceLines
+			(	
+				SELECT C.CustomerName, YEAR(I.InvoiceDate) as invoice_year, IL.Quantity*IL.UnitPrice as cost
+				FROM Sales.Invoices as I
+				JOIN Sales.Customers as C ON I.CustomerID = C.CustomerID
+				JOIN Sales.InvoiceLines as IL ON I.InvoiceID = IL.InvoiceID 
+			) as joined_tables
+			-- Pivoting the table on the year of I.InvoiceDate
+			Pivot
+			(		SUM(joined_tables.cost)
+					FOR joined_tables.invoice_year IN ([2013],[2014],[2015],[2016])
+			) as pivoted
+		GROUP BY pivoted.CustomerName
+		ORDER BY pivoted.CustomerName
+	END
+
+END

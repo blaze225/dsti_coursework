@@ -1,0 +1,46 @@
+SELECT t2.CustomerCategoryName, t2.MaxLoss, t3.CustomerName, t3.CustomerID
+FROM
+	-- Get CustomerCategoryName with MaxLoss
+	(	SELECT ca.CustomerCategoryName, MAX(t1.Loss) as MaxLoss 
+		FROM
+			-- Get Loss per Customer with CustomerCategoryID
+			(	SELECT c.CustomerID, SUM(Quantity*UnitPrice) as Loss, c.CustomerCategoryID
+				FROM Sales.OrderLines as ol
+				JOIN Sales.Orders as o on ol.OrderID = o.OrderID
+				JOIN Sales.Customers as c on o.CustomerID = c.CustomerID
+				WHERE o.OrderID in
+						-- Get OrderIDs which do not have an InvoiceID
+						(	SELECT OrderID
+							FROM Sales.Orders 
+							WHERE CustomerID = c.CustomerID
+							EXCEPT
+							SELECT OrderID 
+							FROM Sales.Invoices 
+							WHERE CustomerID = c.CustomerID
+						)
+				GROUP BY c.CustomerID, c.CustomerCategoryID
+			) as t1
+		JOIN Sales.CustomerCategories as ca on t1.CustomerCategoryID = ca.CustomerCategoryID
+		GROUP BY ca.CustomerCategoryName
+	) as t2
+JOIN
+	-- Joining CustomerCategoryName,MaxLoss with Loss,CustomerID,CustomerName
+	-- To get Customer details
+	(	SELECT c.CustomerID, SUM(Quantity*UnitPrice) as Loss, c.CustomerName
+			FROM Sales.OrderLines as ol
+			JOIN Sales.Orders as o on ol.OrderID = o.OrderID
+			JOIN Sales.Customers as c on o.CustomerID = c.CustomerID
+			WHERE o.OrderID in
+					-- Get OrderIDs which do not have an InvoiceID
+					(	SELECT OrderID
+						FROM Sales.Orders 
+						WHERE CustomerID = c.CustomerID
+						EXCEPT
+						SELECT OrderID 
+						FROM Sales.Invoices 
+						WHERE CustomerID = c.CustomerID
+					)
+			GROUP BY c.CustomerID, c.CustomerName
+	) as t3
+ON t2.MaxLoss = t3.Loss
+ORDER BY t2.MaxLoss DESC

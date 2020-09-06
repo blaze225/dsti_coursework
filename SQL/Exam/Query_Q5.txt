@@ -1,0 +1,18 @@
+SELECT *
+FROM Customer AS C
+WHERE NOT EXISTS 
+		( SELECT *
+		  FROM Product AS P
+		  WHERE NOT EXISTS 
+			( SELECT *
+			   FROM Purchase AS Pu
+			   WHERE
+			   -- This Subquery returns the sum of Qty bought by Current Customer
+			   (  SELECT SUM(Qty)
+				  FROM Purchase
+				  WHERE CustomerId = C.CustomerId
+				) > 50
+			   AND Pu.CustomerId = C.CustomerId 
+			   AND Pu.ProductId = P.ProductId
+			 )
+	     )
